@@ -1,0 +1,71 @@
+class Solution {
+    // A class represent an interval
+    class Interval {
+        int start; 
+        int end; 
+        Interval(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+    }
+    
+    public List<Integer> partitionLabels(String S) {
+        List<Integer> result = new ArrayList<>(); 
+        
+        Map<Character, List<Integer>> map = new HashMap<>();
+        
+        // Walk through input, update the map
+        for (int i = 0; i < S.length(); i++) {
+            char key = S.charAt(i);
+            
+            if (!map.containsKey(key)) {
+                // first time, initialize an empty list
+                map.put(key, new ArrayList<>());
+            } 
+            
+            // Collect index of character key 
+            map.get(key).add(i);
+        }
+        
+        // Build intervals of each character 
+        List<Interval> intervals = new ArrayList<>(); 
+        
+        for (char key : map.keySet()) {
+            List<Integer> indexs = map.get(key);
+            Interval interval = new Interval(indexs.get(0), indexs.get(indexs.size() - 1));
+            intervals.add(interval);
+        }
+        
+        // Sort the interval by starting point
+        Collections.sort(intervals, new Comparator<Interval>() {
+            @Override 
+            public int compare(Interval interval1, Interval interval2) {
+                if (interval1.start != interval2.start) {
+                    return interval1.start - interval2.start; 
+                } else {
+                    return interval1.end - interval2.end; 
+                }
+            }
+        }); 
+        
+        // Merge Interval
+        for (int i = 1; i < intervals.size(); i++) {
+            Interval prev = intervals.get(i - 1);
+            Interval curr = intervals.get(i);
+            
+            if (curr.start <= prev.end) {
+                // There's overlap, merge
+                prev.start = Math.min(prev.start, curr.start);
+                prev.end = Math.max(prev.end, curr.end);
+                intervals.remove(i);
+                i--;
+            }
+        }
+        
+        for (Interval interval : intervals) {
+            result.add(interval.end - interval.start + 1);
+        }
+        
+        return result; 
+    }
+}
