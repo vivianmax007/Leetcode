@@ -1,0 +1,33 @@
+class Solution {
+    public List<String> subdomainVisits(String[] cpdomains) {
+        Map <String, Integer> map = new HashMap ();
+        
+        
+           for(String str: cpdomains) {
+               //split the number in the front
+               String[] line = str.split(" ");
+               int count = Integer.valueOf(line[0]);
+               //split the domains after the number according "."
+               String [] domains = line[1].split("\\.");
+               //setup an empty string "temp"
+               String temp = "";
+               for(int i = domains.length-1; i >= 0; i--) {
+                   // start from the last subdomains
+                   // if the temp is empty, the result is temp,which is domains[i];for example: com
+                   //if the temp is not empty, the result is "."+temp; for example:b.com
+                   temp = domains[i] + (temp.equals("") ? temp:"." + temp);
+                   if (!map.containsKey(temp))   {
+                       map.put(temp, count);     
+                   } else 
+                    map.put(temp,map.get(temp)+count);
+           }
+        }
+        
+        List<String> res = new ArrayList<>();
+         for (String str: map.keySet()) {
+             res.add(map.get(str) +" " +str);
+         }
+        return res;
+    }
+    
+}
